@@ -20,27 +20,20 @@ contract TokenERC20 {
         string tokenName,
         string tokenSymbol
     ) public {
-        totalSupply = initialSupply * 10 ** uint256(decimals);  // Update total supply with the decimal amount
-        balanceOf[msg.sender] = totalSupply;                // Give the creator all initial tokens
-        name = tokenName;                                   // Set the name for display purposes
-        symbol = tokenSymbol;                               // Set the symbol for display purposes
+        totalSupply = initialSupply * 10 ** uint256(decimals); 
+        balanceOf[msg.sender] = totalSupply;               
+        name = tokenName;                                  
+        symbol = tokenSymbol;                              
     }
 
     function _transfer(address _from, address _to, uint _value) internal {
-        // Prevent transfer to 0x0 address. Use burn() instead
         require(_to != 0x0);
-        // Check if the sender has enough
         require(balanceOf[_from] >= _value);
-        // Check for overflows
         require(balanceOf[_to] + _value > balanceOf[_to]);
-        // Save this for an assertion in the future
         uint previousBalances = balanceOf[_from] + balanceOf[_to];
-        // Subtract from the sender
         balanceOf[_from] -= _value;
-        // Add the same to the recipient
         balanceOf[_to] += _value;
         Transfer(_from, _to, _value);
-        // Asserts are used to use static analysis to find bugs in your code. They should never fail
         assert(balanceOf[_from] + balanceOf[_to] == previousBalances);
     }
 
@@ -72,19 +65,19 @@ contract TokenERC20 {
     }
 
     function burn(uint256 _value) public returns (bool success) {
-        require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
-        balanceOf[msg.sender] -= _value;            // Subtract from the sender
-        totalSupply -= _value;                      // Updates totalSupply
+        require(balanceOf[msg.sender] >= _value);   
+        balanceOf[msg.sender] -= _value;            
+        totalSupply -= _value;                      
         Burn(msg.sender, _value);
         return true;
     }
 
     function burnFrom(address _from, uint256 _value) public returns (bool success) {
-        require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
-        require(_value <= allowance[_from][msg.sender]);    // Check allowance
-        balanceOf[_from] -= _value;                         // Subtract from the targeted balance
-        allowance[_from][msg.sender] -= _value;             // Subtract from the sender's allowance
-        totalSupply -= _value;                              // Update totalSupply
+        require(balanceOf[_from] >= _value);                
+        require(_value <= allowance[_from][msg.sender]);    
+        balanceOf[_from] -= _value;                        
+        allowance[_from][msg.sender] -= _value;             
+        totalSupply -= _value;                              
         Burn(_from, _value);
         return true;
     }
