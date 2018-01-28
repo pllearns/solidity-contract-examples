@@ -60,7 +60,6 @@ contract Campaign {
 
     function finalizeRequest(uint index) public restricted{
         Request storage request = requests[index];
-        require(request.approvalCount > 50);
         require(request.approvalCount > (approversCount / 2));
     
         request.complete = true;
